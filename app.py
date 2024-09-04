@@ -4,12 +4,12 @@ import pandas as pd
 
 # Load the model and check its type
 try:
-    dt = joblib.load('decision_tree_model.pkl')
-    model_type = type(dt).__name__
+    model = joblib.load('decision_tree_model.pkl')
+    model_type = type(model).__name__
     st.write(f"Model loaded successfully. Model type: {model_type}")
 except Exception as e:
     st.write(f"Error loading model: {e}")
-    dt = None
+    model = None
 
 # Title of the app
 st.title("Airline Ticket Price Prediction")
@@ -54,10 +54,10 @@ input_df = pd.DataFrame([input_data])
 
 # Predict button
 if st.button('Predict Price'):
-    if dt is not None:
+    if model is not None:
         try:
             # Ensure input is in the correct format (numeric and without missing values)
-            prediction = dt.predict(input_df)
+            prediction = model.predict(input_df)
             st.write(f"Predicted Ticket Price: ${prediction[0]:.2f}")
         except Exception as e:
             st.write(f"Error in prediction: {e}")
