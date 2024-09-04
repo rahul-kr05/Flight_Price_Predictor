@@ -1,8 +1,15 @@
 import streamlit as st
 import joblib
+import pandas as pd
 
-# Load the model
-rf = joblib.load('random_forest_model.pkl')
+# Load the model and check its type
+try:
+    dt = joblib.load('decision_tree_model.pkl')
+    model_type = type(dt).__name__
+    st.write(f"Model loaded successfully. Model type: {model_type}")
+except Exception as e:
+    st.write(f"Error loading model: {e}")
+    dt = None
 
 # Title of the app
 st.title("Airline Ticket Price Prediction")
@@ -25,18 +32,34 @@ arrival_time = st.selectbox('Arrival Time', list(arrival_time_map.keys()))
 destination_city = st.selectbox('Destination City', list(destination_city_map.keys()))
 travel_class = st.selectbox('Class', list(class_map.keys()))
 
-# Map inputs to numerical values
-input_features = [
-    airline_map[airline],
-    source_city_map[source_city],
-    departure_time_map[departure_time],
-    stops_map[stops],
-    arrival_time_map[arrival_time],
-    destination_city_map[destination_city],
-    class_map[travel_class]
-]
+# Additional numeric inputs
+duration = st.number_input('Duration (in hours)', min_value=0.0, step=0.1)
+days_left = st.number_input('Days Left until Flight', min_value=0, step=1, format='%d')
+
+# Prepare the input data as a dictionary
+input_data = {
+    'airline': airline_map[airline],
+    'source_city': source_city_map[source_city],
+    'departure_time': departure_time_map[departure_time],
+    'stops': stops_map[stops],
+    'arrival_time': arrival_time_map[arrival_time],
+    'destination_city': destination_city_map[destination_city],
+    'class': class_map[travel_class],
+    'duration': duration,
+    'days_left': int(days_left)  # Ensure this is an integer
+}
+
+# Convert the input dictionary to a DataFrame
+input_df = pd.DataFrame([input_data])
 
 # Predict button
 if st.button('Predict Price'):
-    prediction = rf.predict([input_features])
-    st.write(f"Predicted Ticket Price: ${prediction[0]:.2f}")
+    if dt is not None:
+        try:
+            # Ensure input is in the correct format (numeric and without missing values)
+            prediction = dt.predict(input_df)
+            st.write(f"Predicted Ticket Price: ${prediction[0]:.2f}")
+        except Exception as e:
+            st.write(f"Error in prediction: {e}")
+    else:
+        st.write("Model is not loaded properly.")
