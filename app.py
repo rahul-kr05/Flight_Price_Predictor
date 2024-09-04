@@ -1,6 +1,6 @@
 import streamlit as st
 import joblib
-import numpy as np
+import pandas as pd
 
 # Load the model
 rf = joblib.load('random_forest_model.pkl')
@@ -30,20 +30,24 @@ travel_class = st.selectbox('Class', list(class_map.keys()))
 duration = st.number_input('Duration (in hours)', min_value=0.0, step=0.1)
 days_left = st.number_input('Days Left until Flight', min_value=0.0, step=0.1)
 
-# Map inputs to numerical values
-input_features = np.array([
-    airline_map[airline],
-    source_city_map[source_city],
-    departure_time_map[departure_time],
-    stops_map[stops],
-    arrival_time_map[arrival_time],
-    destination_city_map[destination_city],
-    class_map[travel_class],
-    duration,
-    days_left
-]).reshape(1, -1)  # Ensure input is 2D array as expected by the model
+# Prepare the input data as a dictionary
+input_data = {
+    'airline': airline_map[airline],
+    'source_city': source_city_map[source_city],
+    'departure_time': departure_time_map[departure_time],
+    'stops': stops_map[stops],
+    'arrival_time': arrival_time_map[arrival_time],
+    'destination_city': destination_city_map[destination_city],
+    'class': class_map[travel_class],
+    'duration': duration,
+    'days_left': days_left
+}
+
+# Convert the input dictionary to a DataFrame
+input_df = pd.DataFrame([input_data])
 
 # Predict button
 if st.button('Predict Price'):
-    prediction = rf.predict(input_features)
+    prediction = rf.predict(input_df)
     st.write(f"Predicted Ticket Price: ${prediction[0]:.2f}")
+
