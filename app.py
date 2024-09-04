@@ -1,5 +1,6 @@
 import streamlit as st
 import joblib
+import numpy as np
 
 # Load the model
 rf = joblib.load('random_forest_model.pkl')
@@ -30,7 +31,7 @@ duration = st.number_input('Duration (in hours)', min_value=0.0, step=0.1)
 days_left = st.number_input('Days Left until Flight', min_value=0.0, step=0.1)
 
 # Map inputs to numerical values
-input_features = [
+input_features = np.array([
     airline_map[airline],
     source_city_map[source_city],
     departure_time_map[departure_time],
@@ -40,9 +41,9 @@ input_features = [
     class_map[travel_class],
     duration,
     days_left
-]
+]).reshape(1, -1)  # Ensure input is 2D array as expected by the model
 
 # Predict button
 if st.button('Predict Price'):
-    prediction = rf.predict([input_features])
+    prediction = rf.predict(input_features)
     st.write(f"Predicted Ticket Price: ${prediction[0]:.2f}")
