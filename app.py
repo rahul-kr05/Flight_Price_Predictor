@@ -25,6 +25,10 @@ arrival_time = st.selectbox('Arrival Time', list(arrival_time_map.keys()))
 destination_city = st.selectbox('Destination City', list(destination_city_map.keys()))
 travel_class = st.selectbox('Class', list(class_map.keys()))
 
+# Additional numeric inputs
+duration = st.number_input('Duration (in hours)', min_value=0.0, step=0.1)
+days_left = st.number_input('Days Left until Flight', min_value=0.0, step=0.1)
+
 # Map inputs to numerical values
 input_features = [
     airline_map[airline],
@@ -33,7 +37,9 @@ input_features = [
     stops_map[stops],
     arrival_time_map[arrival_time],
     destination_city_map[destination_city],
-    class_map[travel_class]
+    class_map[travel_class],
+    duration,
+    days_left
 ]
 
 # Predict button
