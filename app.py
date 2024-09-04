@@ -2,10 +2,11 @@ import streamlit as st
 import joblib
 import pandas as pd
 
-# Load the model
+# Load the model and check its type
 try:
     rf = joblib.load('random_forest_model.pkl')
-    st.write("Model loaded successfully.")
+    model_type = type(rf).__name__
+    st.write(f"Model loaded successfully. Model type: {model_type}")
 except Exception as e:
     st.write(f"Error loading model: {e}")
     rf = None
