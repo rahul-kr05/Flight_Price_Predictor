@@ -2,7 +2,7 @@ import streamlit as st
 import joblib
 import pandas as pd
 
-# Load the model and check its type
+# Load the model
 try:
     model = joblib.load('decision_tree_model.pkl')
     model_type = type(model).__name__
