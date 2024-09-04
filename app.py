@@ -48,6 +48,9 @@ input_df = pd.DataFrame([input_data])
 
 # Predict button
 if st.button('Predict Price'):
-    # Ensure input is in the correct format (numeric and without missing values)
-    prediction = rf.predict(input_df)
-    st.write(f"Predicted Ticket Price: ${prediction[0]:.2f}")
+    try:
+        # Ensure input is in the correct format (numeric and without missing values)
+        prediction = rf.predict(input_df)
+        st.write(f"Predicted Ticket Price: ${prediction[0]:.2f}")
+    except Exception as e:
+        st.write(f"Error in prediction: {e}")
